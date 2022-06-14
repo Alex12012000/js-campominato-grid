@@ -12,19 +12,24 @@ Al termine della partita il software deve comunicare il punteggio, cioè il nume
 */
 
 // Chiedo la difficoltà all'utente
-const userDifficulty  = prompt('Scegli il livello di difficoltà tra 1 - 2 - 3');
-// Difficoltà
+let userDifficulty;
+// Difficoltà di base
 let maxNumbers = 0;
-// Array bombe
-
 
 // Definisco la difficoltà in base alla scelta fatta dall'utente 
-if(userDifficulty === '1') {
-    maxNumbers = 100;
-} else if (userDifficulty === '2') {
-    maxNumbers = 81;
-} else if (userDifficulty === '3') {
-    maxNumbers = 49;
+while(userDifficulty < 1 || userDifficulty > 3 || isNaN(userDifficulty)){
+
+    userDifficulty = parseInt(prompt('Scegli il livello di difficoltà tra 1 - 2 - 3'));
+
+    if(userDifficulty === 1) {
+        maxNumbers = 100;
+    } else if (userDifficulty === 2) {
+        maxNumbers = 81;
+    } else if (userDifficulty === 3) {
+        maxNumbers = 49;
+    } else {
+        alert('Inserisci un numero corretto')
+    }
 }
 
 // Variabile che racchiude l'array con le bombe generate
@@ -32,11 +37,47 @@ let bomb = bombGenerator(16, 1, maxNumbers);
 console.log(bomb)
 
 
+// Tentativi dell'utente
+let maxAttempts = 18 - 16;
+
+let userInputArray = [];
+// finche l'utente inserisce un numero che non è presente nell'array di bombe
+// continua a chiedere un numero finche non arriva al numero massimo di tentativi
+// se l'utente inserisce un numero che è presente all'interno dell'array bombe, l'utente perde
+let game = true
+while(game) {
+
+    let userInput = parseInt(prompt('Dimmi un numero'))
+    
+    // se l'utente inserisce un numero diverso da quello inserito precedentemente il gioco continua
+    // altrimenti continua a chidere un numero diverso
+    if (userInput < 1 || userInput > maxNumbers) {
+        alert ('Numero non corretto')
+    } else if (!userInputArray.includes(userInput)) {
+        userInputArray.push(userInput)
+    }
+    // se l'utente inserisce un numero che si trova anche all'interno dell'array di bombe, il gioco finisce
+    // Se l'utente inserisce un numero diverso dal numero delle bombe per il numero di tentativi totali, l'utente vince
+    // Alert di vittoria + punteggio
+    if(bomb.includes(userInput)) {
+        game = false;
+        alert('hai perso')
+    } else if(userInputArray.length === maxAttempts) {
+        game = false;
+        alert('Hai vinto')
+        alert ('l tuo punteggio è ' + userInputArray.length)
+    }
+
+    console.log(userInputArray);
+}
+
+
+
 // ------------------------
 //      FUNZIONI
 // -----------------------
 
-// Funzione che genera 16 bombe da un minimo di 1 fino ad un massimo indicato dalla difficoltà scelta dall'utente
+// Funzione che genera 16 bombe con un numero che va da un minimo di 1 fino ad un massimo indicato dalla difficoltà scelta dall'utente
 
 function bombGenerator (bombNumb, max, min) {
 
